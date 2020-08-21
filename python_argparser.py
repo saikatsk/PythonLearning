@@ -40,6 +40,10 @@ def go_to_destination_dir(destination_dir_name):
     for f in files:
         print(f)
 
+def remove_folder_contents(path):
+    shutil.rmtree(path)
+    os.makedirs(path)
+    
 
 if __name__ == "__main__":
     print("OS Name: " + os.name)
