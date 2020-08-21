@@ -12,9 +12,10 @@ def go_to_root_dir(root_dir_name):
     print("Head of '% s:'" % pwd, head_tail[0])
     print("Tail of '% s:'" % pwd, head_tail[1], "\n")
 
-    temp = '/'+root_dir_name
+    #temp = '/'+root_dir_name
+    temp = root_dir_name
     print(temp)
-    while (head_tail[0] != temp):
+    while (head_tail[1] != temp):
         pwd = head_tail[0]
         print("Present working dir: " + pwd)
         head_tail = os.path.split(pwd)
@@ -24,9 +25,20 @@ def go_to_root_dir(root_dir_name):
         print("Head of '% s:'" % pwd, head_tail[0])
         print("Tail of '% s:'" % pwd, head_tail[1], "\n")
 
-    os.chdir(head_tail[0])
+    pwd = os.path.join(head_tail[0], head_tail[1]);
+    os.chdir(pwd)
     pwd = os.getcwd()
     print("Present working dir: " + pwd)
+
+def go_to_destination_dir(destination_dir_name):
+    pwd = os.getcwd()
+    temp = pwd+destination_dir_name
+    os.chdir(temp)
+    pwd = os.getcwd()
+    print("Present working dir: " + pwd)
+    files = os.listdir(pwd)
+    for f in files:
+        print(f)
 
 
 if __name__ == "__main__":
@@ -82,12 +94,4 @@ if (str(args.HIA_FPGA_FLAVOR) == "ALL"):
     print("Build F_OHIA_LV2")
 
 go_to_root_dir("home")
-
-pwd = os.getcwd()
-temp = pwd+'/bulbul/Downloads'
-os.chdir(temp)
-pwd = os.getcwd()
-print("Present working dir: " + pwd)
-files = os.listdir(pwd)
-for f in files:
-    print(f)
+go_to_destination_dir("/bulbul/Downloads")
