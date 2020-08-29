@@ -7,7 +7,7 @@
 # This library is used for GUI apps
 # sudo pip3 install tkinter
 # espeak - this library works with pyttsx3 in linux
-# sudo pip3 install python3-espeak
+# sudo apt-get install python3-espeak
 
 import pyttsx3
 import PyPDF2
