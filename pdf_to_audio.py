@@ -5,7 +5,7 @@
 # sudo pip3 install pyttsx3
 # tkinter - Python equivalent of Tcl/Tk
 # This library is used for GUI apps
-# sudo pip3 install tkinter
+# sudo apt-get install python3-tk
 # espeak - this library works with pyttsx3 in linux
 # sudo apt-get install python3-espeak
 
