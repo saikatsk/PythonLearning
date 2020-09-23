@@ -36,10 +36,23 @@ def parse_command_line():
         help='Usage: --top < Top level design unit name (DUT)>')
     parser.add_argument('--test_name',
         help='Usage: --test_name < Test name: test to run >')
+    parser.add_argument('--uvm_verbosity',
+        choices= ['UVM_DEBUG', 'UVM_FULL', 'UVM_HIGH', 'UVM_LOW', 'UVM_MEDIUM', 'UVM_NONE'],
+        help='Usage: --uvm_verbosity < UVM_DEBUG | UVM_FULL | UVM_HIGH | UVM_LOW | UVM_MEDIUM | UVM_NONE >')
+    parser.add_argument('--uvm_timeout',
+        help='Usage: --uvm_timeout < UVM Test timeout value >')
+    parser.add_argument('--svseed',
+        help='Usage: --svseed < UVM Test seed >')
     parser.add_argument('--DEFINE', nargs='+',
         help='Usage: --DEFINE < define(s) to pass to test bench>')
     parser.add_argument('--sixty_four', action='store_true',
         help='To enable XRUN run on 64 bit mode')
+    parser.add_argument('--notimingchecks', action='store_true',
+        help='Pass -notimingchecks option to XRUN')
+    parser.add_argument('--nospecify', action='store_true',
+        help='Pass -nospecify option to XRUN')
+    parser.add_argument('--fast_func', action='store_true',
+        help='Define and pass -fast_func option to XRUN')
 
     args = parser.parse_args()
     #print(args)
@@ -66,52 +79,61 @@ def parse_command_line():
     write_file.write("-cdslib $LIB_DIR/$testcase/iuswork/cdstop.lib" + os.linesep)
     write_file.write("-timescale 1ns/1ps" + os.linesep)
 
-if($use_timing_check == 0){  
-     print {$ARGFILE_FH} "-notimingchecks\n";
-  }
-  if($use_specify == 0){
-     print {$ARGFILE_FH} "-nospecify\n";
-  }
-  print {$ARGFILE_FH} "-no_tchk_msg\n";
- # print {$ARGFILE_FH} "-define RTL_SIM\n";
-  print {$ARGFILE_FH} "-notimezeroasrtmsg\n";
-  print {$ARGFILE_FH} "-nbasync\n";
-  print {$ARGFILE_FH} "-nokey\n";
-  print {$ARGFILE_FH} "-licqueue\n";
-  print {$ARGFILE_FH} "-uvm\n";
-  print {$ARGFILE_FH} "-sv\n";
-  print {$ARGFILE_FH} "-forceelab\n";
-  if ($ovl_on) {
-    print {$ARGFILE_FH} "-ovl SVA +sv\n";
-  }
-  print {$ARGFILE_FH} "$uvm_opt\n";
-  print {$ARGFILE_FH} "+UVM_TESTNAME=$test_name\n";
-  print {$ARGFILE_FH} "+UVM_VERBOSITY=$uvm_verbosity\n";
-  print {$ARGFILE_FH} "+UVM_USE_OVM_RUN_SEMANTIC\n";
-  print {$ARGFILE_FH} "+UVM_TIMEOUT=$timeout,NO\n";
-  print {$ARGFILE_FH} "-svseed $random_seed\n";
-  print {$ARGFILE_FH} "-top $TB_TOP_FILE\n";
-  print {$ARGFILE_FH} "-input $ARG_DIR/$testcase/run.tcl\n";
-  print {$ARGFILE_FH} "-l $LOG_DIR/$testcase/run.log\n";
-  print {$ARGFILE_FH} "-vlogext .udp\n";
-  print {$ARGFILE_FH} "-vlogext .vh\n";
-  print {$ARGFILE_FH} "-vlogext .vm\n";
-  print {$ARGFILE_FH} "-vlogext .vmp\n";
-  print {$ARGFILE_FH} "-vlogext .ncvp\n";
-  print {$ARGFILE_FH} "-nowarn DLCPTH\n";
-  print {$ARGFILE_FH} "-nowarn DLNCML\n";
-  print {$ARGFILE_FH} "-nowarn CUSRCH\n";
-  print {$ARGFILE_FH} "-nowarn RTSDAD\n";
-  print {$ARGFILE_FH} "-define RTL_SIM\n";
-  print {$ARGFILE_FH} "-define READSM\n";
-  print {$ARGFILE_FH} "-define TARGET_RENESAS\n";
-  if($no_fast_func == 0){
-  print {$ARGFILE_FH} "-define FAST_FUNC\n";
- 
+    if (args.notimingchecks == True):
+        write_file.write("-notimingchecks" + os.linesep)
+
+    if (args.nospecify == True):
+        write_file.write("-nospecify" + os.linesep)
+
+    write_file.write("-no_tchk_msg" + os.linesep)
+    write_file.write("-notimezeroasrtmsg" + os.linesep)
+    write_file.write("-nbasync" + os.linesep)
+    write_file.write("-nokey" + os.linesep)
+    write_file.write("-licqueue" + os.linesep)
+    write_file.write("-uvm" + os.linesep)
+    write_file.write("-sv" + os.linesep)
+    write_file.write("-forceelab" + os.linesep)
+    #write_file.write("-uvm_opt" + os.linesep)
+
+    if (args.uvm_verbosity == None):
+        write_file.write("+UVM_VERBOSITY=" + "UVM_NONE" + os.linesep)
+    else:
+        write_file.write("+UVM_VERBOSITY=" + str(args.uvm_verbosity) + os.linesep)
+    write_file.write("+UVM_USE_OVM_RUN_SEMANTIC" + os.linesep)
+    if (args.uvm_timeout == None):
+        write_file.write("+UVM_TIMEOUT=" + "4ms" + os.linesep)
+    else:
+        write_file.write("+UVM_TIMEOUT=" + str(args.uvm_timeout) + os.linesep)
+    if (args.uvm_timeout == None):
+        write_file.write("-svseed " + "25" + os.linesep)
+    else:
+        write_file.write("-svseed " + str(args.svseed) + os.linesep)
+    write_file.write("-input $ARG_DIR/$testcase/run.tcl" + os.linesep)
+    write_file.write("-l $LOG_DIR/$testcase/run.log" + os.linesep)
+
+    write_file.write("-vlogext .udp" + os.linesep)
+    write_file.write("-vlogext .vh" + os.linesep)
+    write_file.write("-vlogext .vm" + os.linesep)
+    write_file.write("-vlogext .vmp" + os.linesep)
+    write_file.write("-vlogext .ncvp" + os.linesep)
+    write_file.write("-nowarn DLCPTH" + os.linesep)
+    write_file.write("-nowarn DLNCML" + os.linesep)
+    write_file.write("-nowarn CUSRCH" + os.linesep)
+    write_file.write("-nowarn RTSDAD" + os.linesep)
+    write_file.write("-define RTL_SIM" + os.linesep)
+    write_file.write("-define READSM" + os.linesep)
+    write_file.write("-define TARGET_RENESAS" + os.linesep)
+
+    if (args.fast_func == True):
+        write_file.write("-define FAST_FUNC" + os.linesep)
+
 
     write_file.close()
     #print(args.accumulate(args.DEFINE))
 
+# Steps to perform
+# 1. Prepare directories
+# 2. Declare and initialize internal variables and file names
 
 prepare_cdslib()
 create_seq_lib()
